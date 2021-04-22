@@ -1,6 +1,6 @@
-show
-remove_by_id 1
-execute_script script2.txt
+info
+//execute_script script2.txt
 execute_script script.txt
-history
+info
+
 

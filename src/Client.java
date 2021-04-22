@@ -2,6 +2,9 @@ import console.CommandInvoker;
 import console.Parser;
 import console.command.*;
 import data.CollectionManager;
+import data.Product;
+
+import java.util.ArrayDeque;
 
 /**
  * Класс инкапсулирующий всю логику проекта
@@ -27,6 +30,11 @@ public class Client {
         parser.setFileName(parser.getCollectionFileName());
         manager.setCollection(parser.fromJSONToDeque(parser.readFile()));
 
+        //Проверка на пустой файл
+        if (manager.getCollection() == null){
+            manager.setCollection(new ArrayDeque<Product>());
+        }
+
         //Основной цикл программы
         parser.setInteractive();
         String[] args;
@@ -50,6 +58,7 @@ public class Client {
      */
     public void registerALlCommands(){
         commandInvoker.register("help", new HelpCommand(manager));
+        commandInvoker.register("info", new InfoCommand(manager));
         commandInvoker.register("clear", new ClearCommand(manager));
         commandInvoker.register("show", new ShowCommand(manager));
         commandInvoker.register("add", new AddCommand(manager));

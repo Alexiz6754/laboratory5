@@ -25,18 +25,26 @@ public class ExecuteScriptCommand extends Command{
             throw new InvalidArgumentsCountException();
         }
 
+        //Запоминаем прошлый поток, чтобы вернуться к нему после завершения скрипта
+        BufferedReader bufferedReader = parser.getBufferedReader();
+        String fileName = parser.getFileName();
+
+        //Проверка прав доступа и изменение потока чтения
         try {
             parser.checkFileAccess(args[1]);
             parser.setFileName(args[1]);
             parser.setBufferedReader(new BufferedReader(new InputStreamReader(new FileInputStream(args[1]))));
         } catch (FileNotFoundException | IllegalAccessException e) {
             System.out.println("С файлом что-то не так. Убедитесь в его существовании и проверьте права на чтение");
-            parser.setInteractive();
+            parser.setBufferedReader(bufferedReader);
             return;
         }
 
+        //Исполнили скрипт
         System.out.println(getManager().executeScript(parser));
-        parser.setInteractive();
 
+        //Вернули предыдущие значения
+        parser.setFileName(fileName);
+        parser.setBufferedReader(bufferedReader);
     }
 }

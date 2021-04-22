@@ -3,6 +3,8 @@ package data;
 import console.CommandInvoker;
 import console.Parser;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 /**
@@ -10,11 +12,10 @@ import java.util.*;
  */
 public class CollectionManager {
     private ArrayDeque<Product> collection;
+    private Date dateOfInitialize;
     private CommandInvoker commandInvoker; // Invoker - нужен для работы с историей команд, вывода справки
-    private int scriptLevel; //Контролирует уровень вложенности рекурсии
 
     {
-        scriptLevel = 0;
         collection = new ArrayDeque<Product>();
     }
 
@@ -39,6 +40,7 @@ public class CollectionManager {
      */
     public void setCollection(ArrayDeque<Product> collection){
         this.collection = collection;
+        this.dateOfInitialize = new Date();
     }
 
     //Methods from invoker
@@ -60,6 +62,26 @@ public class CollectionManager {
     }
 
     //Manager methods
+
+    /**
+     * Возвращает информацию о коллекции, тип хранящихся элементов, дата инициализации, количество элементов
+     * @return Строковое представление информации о коллекции
+     */
+    public String getInfo(){
+        return "Тип: Product\n" + "Дата инициализации: " + dateOfInitialize.toString() + "\n" + "Количество элементов: " + getSize();
+    }
+
+    /**
+     * Метод, позволяющий узнать количество элементов в коллекции
+     * @return Возвращает количество элементов коллекции
+     */
+    public int getSize(){
+        if (collection == null){
+            return 0;
+        }
+
+        return collection.size();
+    }
 
     /**
      * Добавляет ноывй элемент в коллекцию
@@ -237,11 +259,6 @@ public class CollectionManager {
      * @return Возвращает информацию о выполнении
      */
     public String executeScript(Parser parser){
-        if (++scriptLevel > 3){
-            scriptLevel = 0;
-            return "Слишком высокий уровень вложенности. Выполнение скрипта прекращается";
-        }
-
         String[] args;
         while (true) {
             try {
@@ -252,12 +269,10 @@ public class CollectionManager {
 
                 commandInvoker.execute(args, parser);
             } catch (OutOfMemoryError | StackOverflowError e){
-                scriptLevel = 0;
-                return "Не хватает ресурсов ЭВМ для исполненения скрипта, исполнении прекращено";
+                return "Не хватает ресурсов ЭВМ для исполненения скрипта, исполнении прервано";
             }
         }
 
-        scriptLevel = 0;
         return "Скрипт успешно исполнен!";
     }
 

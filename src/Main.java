@@ -1,16 +1,19 @@
+import exception.InvalidArgumentsTypeException;
+
+import java.util.Optional;
+
 public class Main {
     public static void main(String[] args) {
 
-        //Берет значение из переменной окружения с названием args[0], если его нет, то = initJSON.txt
-        String fileName;
-        if (args.length == 1){
-            fileName = System.getenv(args[0]);
-            if (fileName == null){
-                fileName = "initJSON.txt";
-            }
-        } else {
-            fileName = "initJSON.txt";
+        String fileName = "";
+        try {
+            fileName = Optional.ofNullable(System.getenv("alex")).orElseThrow(InvalidArgumentsTypeException::new);
+        } catch (InvalidArgumentsTypeException e){
+            System.out.println("Переменной нет, умираю");
+            System.exit(0);
         }
+
+        //fileName = "initJSON.txt";
 
         Client app = new Client(fileName);
         app.start();

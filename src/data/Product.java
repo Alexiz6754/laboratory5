@@ -144,7 +144,7 @@ public class Product implements Comparable<Product>{
     }
 
     /**
-     * Метод интерфейса Comparable<T>, для сравнения элементов по полю price
+     * Метод интерфейса Comparable, для сравнения элементов по полю price
      * @param o - Объект класса Product
      * @return Возвращает результат сравнения значения поля price данной сущности и поля price переданного параметра
      */

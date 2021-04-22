@@ -47,6 +47,22 @@ public class Parser {
     }
 
     /**
+     * Метод, возвращающий актуальный поток из которого производится чтение
+     * @return Возвращает актуальный поток для чтения
+     */
+    public BufferedReader getBufferedReader(){
+        return bufferedReader;
+    }
+
+    /**
+     * Возвращает имя файла с которым приложение работает в данный момент
+     * @return Возвращает имя текущего файла
+     */
+    public String getFileName(){
+        return this.fileName;
+    }
+
+    /**
      * Метод, позволяющий изменить имя целевого файла с которым работает Parser
      * @param fileName - Имя файла
      */
@@ -56,7 +72,7 @@ public class Parser {
 
     /**
      * Метод, позволяющий изменить поток чтения, используется для переключения между чтением из файла и из консоли
-     * @param bufferedReader - Поток ввода
+     * @param bufferedReader - Новый поток из которого происходит чтение данных
      */
     public void setBufferedReader(BufferedReader bufferedReader) {
         this.bufferedReader = bufferedReader;
@@ -81,7 +97,7 @@ public class Parser {
 
     /**
      * Метод, считывающий строку и разбивающий ее на слова в виде названия команды и ее аргументов
-     * @return
+     * @return Возвращает массив
      */
     public String[] read(){
         String[] words;

@@ -31,7 +31,7 @@ public abstract class Command {
      * Метод в котором описана вся логика команды
      * @param args - Входные данные args[0] - имя команды, args[1...N] - Аргументы команды
      * @param parser - Объект parser
-     * @throws InvalidArgumentsCountException
+     * @throws InvalidArgumentsCountException Исключение вызывающееся при неверном количестве переданных аргументов команды
      */
     //args - Массив аргументов командной строки, [0] - имя команды, [1..N] - примитивные аргументы команды
     public abstract void execute(String[] args, Parser parser) throws InvalidArgumentsCountException;
