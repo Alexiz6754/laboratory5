@@ -30,7 +30,7 @@ interface SetPredicate{
  */
 public class Parser {
     private static String collectionFileName; // Имя файла из которого инициализируем коллекцию, и куда сохраняем
-    private String fileName; //Имя файла с которым мы сейчас работаем
+    private String fileName; //Имя файла с которым мы сейчас работаем (Читаем скрипт, записываем/считываем коллекцию)
     BufferedReader bufferedReader;
 
     {
@@ -89,7 +89,7 @@ public class Parser {
 
     /**
      * Метод, позволяющий узнать имя файла в котором хранится коллекция
-     * @return
+     * @return Возврощает имя файла в котором хранится коллекция
      */
     public String getCollectionFileName(){
         return collectionFileName;
@@ -102,7 +102,7 @@ public class Parser {
     public String[] read(){
         String[] words;
         if (fileName.isEmpty()) {
-            System.out.print("> "); // Обозначает ввод, для красоты
+            System.out.print("> "); //Приглашение на ввод, для красоты
         }
         while (true){
             String line;
@@ -119,7 +119,7 @@ public class Parser {
                     return null;
                 }
 
-                line = "exit"; // Закрываем программу если получили на вход EOF == "^D"
+                line = "exit"; // Закрываем программу если получили на вход EOF ("^D")
             }
 
             //Если строка пустая, пропускаем ее и читаем дальше
@@ -144,49 +144,24 @@ public class Parser {
      * @return - объект Product
      */
     public Product parseProduct(){
-        System.out.println("Начинается инициализация объекта Product: ");
+        if (fileName.isEmpty()) {
+            System.out.println("Начинается инициализация объекта Product: ");
+        }
+
         Product result = new Product();
 
-        ParseSupplier stringSupplier = new ParseSupplier() {
-            @Override
-            public Object parse(String line) {
-                return line;
-            }
-        };
-        ParseSupplier doubleSupplier = new ParseSupplier() {
-            @Override
-            public Object parse(String line) {
-                return Double.parseDouble(line);
-            }
-        };
-        ParseSupplier integerSupplier = new ParseSupplier() {
-            @Override
-            public Object parse(String line) {
-                return Integer.parseInt(line);
-            }
-        };
+        ParseSupplier stringSupplier = line -> line;
+        ParseSupplier doubleSupplier = Double::parseDouble;
+        ParseSupplier integerSupplier = Integer::parseInt;
 
-        parseField("name", stringSupplier, new SetPredicate() {
-            @Override
-            public boolean test(Object o) {
-                return result.setName((String) o);
+        parseField("name", stringSupplier, o -> result.setName((String) o));
+        parseField("price", doubleSupplier, o -> {
+            if (o == null){
+                return false;
             }
+            return result.setPrice((double) o);
         });
-        parseField("price", doubleSupplier, new SetPredicate() {
-            @Override
-            public boolean test(Object o) {
-                if (o == null){
-                    return false;
-                }
-                return result.setPrice((double) o);
-            }
-        });
-        parseField("manufactureCost", integerSupplier, new SetPredicate() {
-            @Override
-            public boolean test(Object o) {
-                return result.setManufactureCost((Integer) o);
-            }
-        });
+        parseField("manufactureCost", integerSupplier, o -> result.setManufactureCost((Integer) o));
 
         result.setCoordinates(parseCoordinates());
         result.setUnitOfMeasure(parseUnitOfMeasure());
@@ -200,28 +175,16 @@ public class Parser {
      * @return - объект Coordinates
      */
     public Coordinates parseCoordinates(){
-        System.out.println("Начинается инициализация объекта Coordinates: ");
+        if (fileName.isEmpty()) {
+            System.out.println("Начинается инициализация объекта Coordinates: ");
+        }
+
         Coordinates result = new Coordinates();
 
-        ParseSupplier longSupplier = new ParseSupplier() {
-            @Override
-            public Object parse(String line) {
-                return Long.parseLong(line);
-            }
-        };
+        ParseSupplier longSupplier = Long::parseLong;
 
-        parseField("x", longSupplier, new SetPredicate() {
-            @Override
-            public boolean test(Object o) {
-                return result.setX((Long) o);
-            }
-        });
-        parseField("y", longSupplier, new SetPredicate() {
-            @Override
-            public boolean test(Object o) {
-                return result.setY((Long) o);
-            }
-        });
+        parseField("x", longSupplier, o -> result.setX((Long) o));
+        parseField("y", longSupplier, o -> result.setY((Long) o));
 
         return result;
     }
@@ -231,22 +194,15 @@ public class Parser {
      * @return - объект Address
      */
     public Address parseAddress(){
-        System.out.println("Начинается инициализация объекта Address");
+        if (fileName.isEmpty()) {
+            System.out.println("Начинается инициализация объекта Address");
+        }
+
         Address result = new Address();
 
-        ParseSupplier stringSupplier = new ParseSupplier() {
-            @Override
-            public Object parse(String line) {
-                return line;
-            }
-        };
+        ParseSupplier stringSupplier = line -> line;
 
-        parseField("zipCode", stringSupplier, new SetPredicate() {
-            @Override
-            public boolean test(Object o) {
-                return result.setZipCode((String) o);
-            }
-        });
+        parseField("zipCode", stringSupplier, o -> result.setZipCode((String) o));
 
         return result;
     }
@@ -256,41 +212,18 @@ public class Parser {
      * @return - объект Organization
      */
     public Organization parseOrganization(){
-        System.out.println("Начинается инициализация объекта Organization: ");
+        if (fileName.isEmpty()) {
+            System.out.println("Начинается инициализация объекта Organization: ");
+        }
+
         Organization result = new Organization();
 
-        ParseSupplier stringSupplier = new ParseSupplier() {
-            @Override
-            public Object parse(String line) {
-                return line;
-            }
-        };
+        ParseSupplier stringSupplier = line -> line;
+        ParseSupplier integerSupplier = Integer::parseInt;
 
-        ParseSupplier integerSupplier = new ParseSupplier() {
-            @Override
-            public Object parse(String line) {
-                return Integer.parseInt(line);
-            }
-        };
-
-        parseField("name", stringSupplier, new SetPredicate() {
-            @Override
-            public boolean test(Object o) {
-                return result.setName((String) o);
-            }
-        });
-        parseField("fullName", stringSupplier, new SetPredicate() {
-            @Override
-            public boolean test(Object o) {
-                return result.setFullName((String) o);
-            }
-        });
-        parseField("employeesCount", integerSupplier, new SetPredicate() {
-            @Override
-            public boolean test(Object o) {
-                return result.setEmployeesCount((Integer) o);
-            }
-        });
+        parseField("name", stringSupplier, o -> result.setName((String) o));
+        parseField("fullName", stringSupplier, o -> result.setFullName((String) o));
+        parseField("employeesCount", integerSupplier, o -> result.setEmployeesCount((Integer) o));
 
         result.setPostalAddress(parseAddress());
 
@@ -302,8 +235,10 @@ public class Parser {
      * @return - обхект класса UnitOfMeasure
      */
     public UnitOfMeasure parseUnitOfMeasure(){
-        System.out.println("Начинается инициализация объекта UnitOfMeasure: ");
-        System.out.println(UnitOfMeasure.getDescription());
+        if (fileName.isEmpty()) {
+            System.out.println("Начинается инициализация объекта UnitOfMeasure: ");
+            System.out.println(UnitOfMeasure.getDescription());
+        }
         UnitOfMeasure result;
 
         String unit;
@@ -315,7 +250,10 @@ public class Parser {
             try {
                 unit = bufferedReader.readLine().trim();
             } catch (IOException e) {
-                System.out.println("Некорректный ввод. Попробуйте снова");
+                if (fileName.isEmpty()) {
+                    System.out.println("Некорректный ввод. Попробуйте снова");
+                }
+
                 continue;
             }
 
@@ -330,12 +268,15 @@ public class Parser {
                 }
             }
 
-            System.out.println("Некорректный ввод. Попробуйте снова");
+            if (fileName.isEmpty()) {
+                System.out.println("Некорректный ввод. Попробуйте снова");
+            }
         }
     }
+    //
 
     /**
-     * Метод, парсящий 'простые' поля (String, int/Integer, long/Long, double/Double ...)
+     * Метод, парсящий 'простые' поля (String, int/Integer, long/Long, double/Double ...) (Примитивы/Обертки/Строки)
      * @param varName - Название поля, ко вводу которого получает приглашение пользователь
      * @param parse - Метод, реализующий парсинг, нужного типа данных
      * @param set - Метод, реализующий установку, нужного поля
@@ -358,11 +299,15 @@ public class Parser {
                 }
 
             } catch (IOException e) {
-                System.out.println("Некорректный ввод. Попробуйте снова");
+                if (fileName.isEmpty()) {
+                    System.out.println("Некорректный ввод. Попробуйте снова");
+                }
                 continue;
             } catch (NumberFormatException e){
                 if (!(line.equals(""))){
-                    System.out.println("Некорректный ввод. Попробуйте снова");
+                    if (fileName.isEmpty()) {
+                        System.out.println("Некорректный ввод. Попробуйте снова");
+                    }
                     continue;
                 }
             } catch (NullPointerException e){
@@ -375,7 +320,9 @@ public class Parser {
                 break;
             }
 
-            System.out.println("Некорректный ввод. Попробуйте снова");
+            if (fileName.isEmpty()) {
+                System.out.println("Некорректный ввод. Попробуйте снова");
+            }
         }
         return result;
     }

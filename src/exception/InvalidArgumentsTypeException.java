@@ -5,7 +5,7 @@ package exception;
  */
 public class InvalidArgumentsTypeException extends NumberFormatException{
     public InvalidArgumentsTypeException(){
-        super("Ошибка! Тип введенного аргумента не соответсвует указанному\nУзнать описание всех команд вы сможете вызвав help");
+        super("Ошибка! Тип введенного аргумента не соответсвует указанному\nУзнать описание всех команд вы сможете вызвав help\n");
     }
 
     public InvalidArgumentsTypeException(String message){

@@ -5,6 +5,7 @@ import java.util.Optional;
 public class Main {
     public static void main(String[] args) {
 
+        //Переменная окружения
         String fileName = "";
         try {
             fileName = Optional.ofNullable(System.getenv("alex")).orElseThrow(InvalidArgumentsTypeException::new);
